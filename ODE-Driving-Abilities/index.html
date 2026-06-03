@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIPDE Driving Abilities</title>
+  <link rel="stylesheet" href="../_shared/brand.css" />
+  <style>
+    h1 {
+      margin: 0 0 0.75rem;
+    }
+
+    .instructions {
+      margin: 0 0 1.5rem;
+    }
+
+    .status-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+    }
+
+    .attempts {
+      font-size: 0.875rem;
+      color: var(--ode-text-muted);
+    }
+
+    .attempts strong {
+      color: var(--ode-text);
+    }
+
+    .attempts.danger strong {
+      color: var(--ode-orange);
+    }
+
+    .message {
+      margin-bottom: 1rem;
+    }
+
+    .message:empty {
+      display: none;
+    }
+
+    .board {
+      margin-bottom: 1.5rem;
+    }
+
+    .scoreboard {
+      background: var(--ode-dark);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow:
+        0 4px 0 #060d14,
+        0 8px 24px rgba(13, 27, 42, 0.35);
+      border: 3px solid #2a3f5f;
+    }
+
+    .scoreboard-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.55rem 1rem;
+      background: linear-gradient(180deg, var(--ode-blue) 0%, #152d6e 100%);
+      border-bottom: 3px solid var(--ode-orange);
+    }
+
+    .scoreboard-title {
+      font-family: var(--ode-font-headline);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .scoreboard-count {
+      font-family: var(--ode-font-headline);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--ode-cream);
+    }
+
+    .scoreboard-count strong {
+      font-size: 1.1rem;
+      color: var(--ode-orange);
+    }
+
+    .scoreboard-body {
+      padding: 0.85rem;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%),
+        var(--ode-dark);
+    }
+
+    .slots {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0;
+      border: 2px solid #1e3348;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    @media (max-width: 520px) {
+      .slots {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .slot {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-height: 4.25rem;
+      background: #111f2e;
+      border-right: 2px solid #1e3348;
+    }
+
+    .slot:last-child {
+      border-right: none;
+    }
+
+    @media (max-width: 520px) {
+      .slot {
+        border-right: none;
+        border-bottom: 2px solid #1e3348;
+        min-height: 3.5rem;
+      }
+      .slot:last-child {
+        border-bottom: none;
+      }
+    }
+
+    .slot-num {
+      padding: 0.3rem 0.5rem 0;
+      font-family: var(--ode-font-headline);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--ode-slate);
+      text-align: center;
+    }
+
+    .slot-word {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.35rem 0.4rem 0.65rem;
+      font-family: var(--ode-font-headline);
+      font-size: clamp(0.65rem, 2.4vw, 0.82rem);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      text-align: center;
+      color: #3d5268;
+      transition: color 0.25s, text-shadow 0.25s;
+    }
+
+    .slot.filled .slot-num {
+      color: var(--ode-success);
+    }
+
+    .slot.filled .slot-word {
+      color: #fff;
+      text-shadow: 0 0 10px rgba(26, 127, 75, 0.5);
+    }
+
+    .slot.filled {
+      background: linear-gradient(180deg, #1e5c3a 0%, #164a2e 100%);
+      box-shadow: inset 0 0 20px rgba(26, 127, 75, 0.2);
+    }
+
+    .slot.just-filled {
+      animation: slot-pop 0.45s ease;
+    }
+
+    @keyframes slot-pop {
+      0% { transform: scale(1); }
+      40% { transform: scale(1.06); }
+      100% { transform: scale(1); }
+    }
+
+    .slot-word.empty::before {
+      content: "—";
+      opacity: 0.5;
+    }
+
+    .options-label {
+      margin-bottom: 0.75rem;
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+    }
+
+    .option-btn {
+      appearance: none;
+      border: 1px solid var(--ode-border);
+      background: var(--ode-surface);
+      color: var(--ode-text);
+      font-family: var(--ode-font-body);
+      font-size: 0.95rem;
+      font-weight: 600;
+      padding: 0.65rem 1.1rem;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s, transform 0.1s, opacity 0.2s;
+      box-shadow: 0 1px 3px rgba(13, 27, 42, 0.06);
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: var(--ode-cream);
+      border-color: var(--ode-orange);
+      color: var(--ode-orange);
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: scale(0.97);
+    }
+
+    .option-btn:disabled {
+      cursor: default;
+      opacity: 0.45;
+    }
+
+    .option-btn.used-correct {
+      background: var(--ode-success-soft);
+      border-color: var(--ode-success);
+      color: var(--ode-success);
+      opacity: 1;
+      font-weight: 700;
+    }
+
+    .option-btn.shake {
+      animation: shake 0.4s ease;
+      border-color: var(--ode-orange);
+      background: var(--ode-error-soft);
+      color: var(--ode-orange);
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-6px); }
+      40% { transform: translateX(6px); }
+      60% { transform: translateX(-4px); }
+      80% { transform: translateX(4px); }
+    }
+
+    .retry-btn {
+      display: none;
+      margin-top: 1.25rem;
+    }
+
+    .retry-btn.visible {
+      display: inline-block;
+    }
+
+    .completion {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    .completion.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="ode-app" role="application" aria-label="SIPDE driving abilities activity">
+    <h1>What are the safe driving abilities that are referred to as SIPDE in this course?</h1>
+    <p class="ode-instructions instructions">
+      Click the buttons below to add all 5 correct answers to the board.
+      Be careful! If you click more than 2 wrong answers you will have to try again!
+    </p>
+
+    <div class="status-bar">
+      <div class="attempts" id="attempts" aria-live="polite">
+        Wrong answers: <strong id="wrong-count">0</strong> / 2
+      </div>
+    </div>
+
+    <p class="ode-message message" id="message" aria-live="assertive"></p>
+
+    <section class="board scoreboard" aria-label="Answer scoreboard">
+      <div class="scoreboard-header">
+        <span class="scoreboard-title">Scoreboard</span>
+        <span class="scoreboard-count"><strong id="score-count">0</strong> / 5</span>
+      </div>
+      <div class="scoreboard-body">
+        <div class="slots" id="slots"></div>
+      </div>
+    </section>
+
+    <section aria-label="Answer choices">
+      <div class="ode-label options-label">Choose an answer</div>
+      <div class="options" id="options" role="group" aria-label="Answer options"></div>
+    </section>
+
+    <button type="button" class="ode-btn ode-btn-primary retry-btn" id="retry-btn">Try again</button>
+    <div class="ode-completion completion" id="completion" role="status">
+      Correct! SIPDE stands for Search, Identify, Predict, Decide, and Execute.
+    </div>
+  </div>
+
+  <script>
+    const CORRECT_ANSWERS = [
+      "Search",
+      "Identify",
+      "Predict",
+      "Decide",
+      "Execute",
+    ];
+
+    const SLOT_COUNT = 5;
+
+    const OPTIONS = [
+      "Predict",
+      "Defend",
+      "Exercise",
+      "Investigate",
+      "Identify",
+      "Search",
+      "Execute",
+      "Perform",
+      "Decide",
+    ];
+
+    const MAX_WRONG = 2;
+
+    const slotsEl = document.getElementById("slots");
+    const optionsEl = document.getElementById("options");
+    const messageEl = document.getElementById("message");
+    const wrongCountEl = document.getElementById("wrong-count");
+    const scoreCountEl = document.getElementById("score-count");
+    const attemptsEl = document.getElementById("attempts");
+    const retryBtn = document.getElementById("retry-btn");
+    const completionEl = document.getElementById("completion");
+
+    let wrongCount = 0;
+    let placed = [];
+    let locked = false;
+    let lastFilledIndex = -1;
+
+    function isCorrect(word) {
+      return CORRECT_ANSWERS.includes(word);
+    }
+
+    function renderBoard() {
+      scoreCountEl.textContent = String(placed.length);
+      slotsEl.innerHTML = Array.from({ length: SLOT_COUNT }, (_, i) => {
+        const word = placed[i];
+        const hasWord = word !== undefined;
+        const justFilled = hasWord && i === lastFilledIndex;
+        return `
+          <div class="slot${hasWord ? " filled" : ""}${justFilled ? " just-filled" : ""}">
+            <span class="slot-num">${i + 1}</span>
+            <div class="slot-word${hasWord ? "" : " empty"}" aria-label="${hasWord ? word : "empty slot"}">
+              ${hasWord ? word : ""}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderOptions() {
+      optionsEl.innerHTML = OPTIONS.map((word) => {
+        const used = placed.includes(word);
+        return `
+          <button
+            type="button"
+            class="option-btn${used ? " used-correct" : ""}"
+            data-word="${word}"
+            ${used || locked ? "disabled" : ""}
+          >${word}</button>
+        `;
+      }).join("");
+
+      optionsEl.querySelectorAll(".option-btn").forEach((btn) => {
+        btn.addEventListener("click", () => handleChoice(btn.dataset.word, btn));
+      });
+    }
+
+    function setMessage(text, type) {
+      messageEl.textContent = text;
+      messageEl.className = "ode-message message" + (type ? " ode-message--" + type : "");
+    }
+
+    function updateWrongDisplay() {
+      wrongCountEl.textContent = String(wrongCount);
+      attemptsEl.classList.toggle("danger", wrongCount >= MAX_WRONG);
+    }
+
+    function handleChoice(word, btn) {
+      if (locked || placed.includes(word)) return;
+
+      if (isCorrect(word)) {
+        placed.push(word);
+        lastFilledIndex = placed.length - 1;
+        renderBoard();
+        renderOptions();
+
+        if (placed.length === SLOT_COUNT) {
+          locked = true;
+          lastFilledIndex = -1;
+          setMessage("Great job! You found all five SIPDE abilities.", "success");
+          completionEl.classList.add("visible");
+        } else {
+          setMessage("Correct!", "success");
+        }
+        return;
+      }
+
+      lastFilledIndex = -1;
+
+      wrongCount += 1;
+      updateWrongDisplay();
+
+      btn.classList.add("shake");
+      btn.addEventListener(
+        "animationend",
+        () => btn.classList.remove("shake"),
+        { once: true }
+      );
+
+      if (wrongCount > MAX_WRONG) {
+        locked = true;
+        setMessage("Too many wrong answers. Click Try again to reset.", "error");
+        retryBtn.classList.add("visible");
+        optionsEl.querySelectorAll(".option-btn:not(:disabled)").forEach((b) => {
+          b.disabled = true;
+        });
+      } else {
+        const remaining = MAX_WRONG - wrongCount;
+        setMessage(
+          `Not quite. You have ${remaining} wrong answer${remaining === 1 ? "" : "s"} left.`,
+          "error"
+        );
+      }
+    }
+
+    function reset() {
+      wrongCount = 0;
+      placed = [];
+      lastFilledIndex = -1;
+      locked = false;
+      updateWrongDisplay();
+      setMessage("");
+      retryBtn.classList.remove("visible");
+      completionEl.classList.remove("visible");
+      renderBoard();
+      renderOptions();
+    }
+
+    retryBtn.addEventListener("click", reset);
+
+    renderBoard();
+    renderOptions();
+    updateWrongDisplay();
+  </script>
+</body>
+</html>

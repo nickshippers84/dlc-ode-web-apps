@@ -1,0 +1,194 @@
+/* ODE Embeddable Apps — Brand Identity */
+
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap");
+
+:root {
+  /* Primary */
+  --ode-orange: #f87431;
+  --ode-blue: #1b3a8c;
+
+  /* Secondary */
+  --ode-cream: #f5e6d3;
+  --ode-blue-green: #2c5f8d;
+
+  /* Supporting / Neutral */
+  --ode-dark: #0d1b2a;
+  --ode-slate: #64748b;
+  --ode-white: #f8f9fa;
+
+  /* Derived */
+  --ode-orange-dark: #dc682f;
+  --ode-orange-soft: #fff4ed;
+  --ode-blue-soft: #e8edf7;
+  --ode-blue-green-soft: #e6eef5;
+  --ode-border: #d4dce6;
+  --ode-shadow: 0 2px 12px rgba(13, 27, 42, 0.08);
+  --ode-radius: 12px;
+
+  /* Typography */
+  --ode-font-headline: "Montserrat", system-ui, sans-serif;
+  --ode-font-body: "Inter", system-ui, sans-serif;
+
+  /* Semantic aliases */
+  --ode-bg: var(--ode-white);
+  --ode-surface: #ffffff;
+  --ode-text: var(--ode-dark);
+  --ode-text-muted: var(--ode-slate);
+  --ode-accent: var(--ode-orange);
+  --ode-accent-hover: var(--ode-orange-dark);
+  --ode-accent-secondary: var(--ode-blue);
+  --ode-accent-secondary-hover: var(--ode-blue-green);
+  --ode-success: #1a7f4b;
+  --ode-success-soft: #e3f5eb;
+  --ode-success-border: #9fd4b8;
+  --ode-error: var(--ode-orange);
+  --ode-error-soft: #fff4ed;
+  --ode-error-border: #f5a574;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--ode-font-body);
+  background: var(--ode-bg);
+  color: var(--ode-text);
+  line-height: 1.5;
+  min-height: 100%;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Headlines — Montserrat */
+h1, h2, h3, .ode-headline {
+  font-family: var(--ode-font-headline);
+  font-weight: 700;
+  color: var(--ode-text);
+  line-height: 1.3;
+}
+
+h1, .ode-headline {
+  font-size: 1.35rem;
+}
+
+/* Sub-headlines & labels — Inter */
+.ode-subhead,
+.ode-label,
+.ode-instructions {
+  font-family: var(--ode-font-body);
+}
+
+.ode-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ode-text-muted);
+}
+
+.ode-instructions {
+  color: var(--ode-text-muted);
+  font-size: 0.95rem;
+}
+
+/* Layout shell */
+.ode-app {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 2rem;
+}
+
+/* Card / panel */
+.ode-card {
+  background: var(--ode-surface);
+  border: 1px solid var(--ode-border);
+  border-radius: var(--ode-radius);
+  box-shadow: var(--ode-shadow);
+  padding: 1.25rem;
+}
+
+/* Buttons */
+.ode-btn {
+  appearance: none;
+  border: none;
+  font-family: var(--ode-font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.1s, opacity 0.2s;
+}
+
+.ode-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.ode-btn:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.ode-btn-primary {
+  background: var(--ode-accent);
+  color: #fff;
+}
+
+.ode-btn-primary:hover:not(:disabled) {
+  background: var(--ode-accent-hover);
+}
+
+.ode-btn-secondary {
+  background: var(--ode-surface);
+  border: 1px solid var(--ode-border);
+  color: var(--ode-text);
+  box-shadow: 0 1px 3px rgba(13, 27, 42, 0.06);
+}
+
+.ode-btn-secondary:hover:not(:disabled) {
+  background: var(--ode-cream);
+  border-color: var(--ode-accent);
+  color: var(--ode-accent);
+}
+
+.ode-btn-pill {
+  border-radius: 999px;
+  padding: 0.65rem 1.1rem;
+}
+
+/* Feedback messages */
+.ode-message {
+  min-height: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, padding 0.2s;
+}
+
+.ode-message:not(:empty) {
+  padding: 0.7rem 1rem;
+}
+
+.ode-message--success {
+  background: var(--ode-success-soft);
+  color: var(--ode-success);
+  border: 1px solid var(--ode-success-border);
+}
+
+.ode-message--error {
+  background: var(--ode-error-soft);
+  color: var(--ode-error);
+  border: 1px solid var(--ode-error-border);
+}
+
+.ode-completion {
+  padding: 1rem 1.15rem;
+  background: var(--ode-success-soft);
+  border: 1px solid var(--ode-success-border);
+  border-radius: var(--ode-radius);
+  color: var(--ode-success);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
